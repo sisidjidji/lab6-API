@@ -37,9 +37,15 @@ const app = express();
 
 app.use(cors()); // Middleware
 
-app.get('/weather', (request, response) => {
-  response.send('Weather.');
-});
+
+
+app.get('/weather', weatherHandler) ;
+function weatherHandler(request, response) {
+  const darksky = require('./data/darksky.json');
+  const weather = request.query.weather;
+  const weatherResponse= new Weather(weather, darksky);
+  response.send(weatherResponse);
+}
 
 // Add /location route
 app.get('/location', locationHandler);
@@ -77,8 +83,15 @@ function notFoundHandler(request, response) {
 }
 
 function Location(city, geoData) {
-  this.search_query = city; // "cedar rapids"
-  this.formatted_query = geoData[0].display_name; // "Cedar Rapids, Iowa"
+  this.search_query = city; // 
+  this.formatted_query = geoData[0].display_name; 
+  this.latitude = parseFloat(geoData[0].lat);
+  this.longitude = parseFloat(geoData[0].lon);
+}
+
+function  Weather( weather,darksky){
+  this.search_query = city; // 
+  this.formatted_query = geoData[0].display_name; 
   this.latitude = parseFloat(geoData[0].lat);
   this.longitude = parseFloat(geoData[0].lon);
 }
