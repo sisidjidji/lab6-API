@@ -40,11 +40,15 @@ app.use(cors()); // Middleware
 
 
 app.get('/weather', weatherHandler) ;
+
 function weatherHandler(request, response) {
-  const darksky = require('./data/darksky.json');
-  const weather = request.query.weather;
-  const weatherResponse= new Weather(weather, darksky);
-  response.send(weatherResponse);
+  const weatherData=require('./data/darksky.json');
+  const weather=[];
+  weatherData.daily.data.forEach(dailyWeather=>{
+    // eslint-disable-next-line semi
+    weather.push(new Weather(dailyWeather))
+  });
+  response.send(weather);
 }
 
 // Add /location route
@@ -89,9 +93,7 @@ function Location(city, geoData) {
   this.longitude = parseFloat(geoData[0].lon);
 }
 
-function  Weather( weather,darksky){
-  this.search_query = city; // 
-  this.formatted_query = geoData[0].display_name; 
-  this.latitude = parseFloat(geoData[0].lat);
-  this.longitude = parseFloat(geoData[0].lon);
+function Weather(weatherData){
+  this.forecast = weatherData.summary;
+  this.time = new Date(weatherData.time * 1000);
 }
